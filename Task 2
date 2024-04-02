@@ -1,0 +1,67 @@
+from PIL import Image
+
+def encrypt_image(image_path, encryption_key):
+    try:
+        img = Image.open(image_path)
+        width, height = img.size
+        pixels = img.load()
+
+        # Encrypting the image by applying a basic mathematical operation to each pixel
+        for i in range(width):
+            for j in range(height):
+                r, g, b = pixels[i, j]
+                # Example encryption: swapping pixel values
+                r = (r + encryption_key) % 256
+                g = (g + encryption_key) % 256
+                b = (b + encryption_key) % 256
+                pixels[i, j] = (r, g, b)
+
+        encrypted_image_path = image_path.split('.')[0] + "_encrypted.png"
+        img.save(encrypted_image_path)
+        print("Image encrypted successfully!")
+        return encrypted_image_path
+    except Exception as e:
+        print("Error:", e)
+
+def decrypt_image(encrypted_image_path, encryption_key):
+    try:
+        img = Image.open(encrypted_image_path)
+        width, height = img.size
+        pixels = img.load()
+
+        # Decrypting the image by applying the reverse operation to each pixel
+        for i in range(width):
+            for j in range(height):
+                r, g, b = pixels[i, j]
+                # Example decryption: swapping pixel values back
+                r = (r - encryption_key) % 256
+                g = (g - encryption_key) % 256
+                b = (b - encryption_key) % 256
+                pixels[i, j] = (r, g, b)
+
+        decrypted_image_path = encrypted_image_path.split('_encrypted')[0] + "_decrypted.png"
+        img.save(decrypted_image_path)
+        print("Image decrypted successfully!")
+        return decrypted_image_path
+    except Exception as e:
+        print("Error:", e)
+
+def main():
+    while True:
+        choice = input("Enter 'E' to encrypt image, 'D' to decrypt image, or 'Q' to quit: ").upper()
+        if choice == 'Q':
+            print("Exiting...")
+            break
+        elif choice == 'E':
+            image_path = input("Enter the path to the image to encrypt: ")
+            encryption_key = int(input("Enter the encryption key: "))
+            encrypt_image(image_path, encryption_key)
+        elif choice == 'D':
+            encrypted_image_path = input("Enter the path to the encrypted image to decrypt: ")
+            encryption_key = int(input("Enter the encryption key: "))
+            decrypt_image(encrypted_image_path, encryption_key)
+        else:
+            print("Invalid choice. Please enter 'E', 'D', or 'Q'.")
+
+if __name__ == "__main__":
+    main()
